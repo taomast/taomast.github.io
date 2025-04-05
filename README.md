@@ -1,1 +1,157 @@
-# taomast.github.io
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>福建土地覆被类型</title>
+  <link rel="stylesheet" href="https://js.arcgis.com/4.32/esri/themes/light/main.css" />
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    #header {
+      height: 50px;
+      background-color: #333;
+      color: white;
+      text-align: center;
+      line-height: 50px;
+    }
+
+    #mapDiv {
+      height: calc(100% - 175px);
+    }
+
+    #basemapGalleryDiv {
+      height: 125px;
+      background-color: #333;
+      color: white;
+    }
+  </style>
+  <script src="https://js.arcgis.com/4.32/"></script>
+  <script>
+    require([
+      "esri/Map",
+      "esri/views/MapView",
+      "esri/layers/FeatureLayer",
+      "esri/widgets/ScaleBar",
+      "esri/widgets/Legend",
+      "esri/widgets/Search",
+      "esri/widgets/LayerList",
+      "esri/widgets/BasemapGallery",
+      "esri/Basemap",
+      "esri/layers/TileLayer"
+    ], function (
+      Map,
+      MapView,
+      FeatureLayer,
+      ScaleBar,
+      Legend,
+      Search,
+      LayerList,
+      BasemapGallery,
+      Basemap,
+      TileLayer
+    ) {
+      // 设置影像混合图为默认底图
+      const defaultBasemap = new Basemap({
+        baseLayers: [
+          new TileLayer({
+            url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer"
+          })
+        ],
+        title: "影像混合图",
+        id: "imagery-hybrid"
+      });
+
+      // 创建地图
+      const map = new Map({
+        basemap: defaultBasemap
+      });
+
+      // 添加一个已发布的专题图层
+      const featureLayer = new FeatureLayer({
+        url: "https://www.geosceneonline.cn/server/rest/services/Hosted/福建土地覆被类型/FeatureServer"
+      });
+      map.add(featureLayer);
+
+      // 创建地图视图
+      const view = new MapView({
+        container: "mapDiv",
+        map: map,
+         center: [118.5, 25.2], // 调整后的中心坐标,
+        zoom: 7
+      });
+
+      // 添加比例尺微件
+      const scaleBar = new ScaleBar({
+        view: view,
+        unit: "dual"
+      });
+      view.ui.add(scaleBar, {
+        position: "bottom-left"
+      });
+
+      // 添加图例微件
+      const legend = new Legend({
+        view: view
+      });
+      view.ui.add(legend, "bottom-right");
+
+      // 添加搜索框微件
+      const search = new Search({
+        view: view
+      });
+      view.ui.add(search, "top-right");
+
+      // 添加图层列表微件
+      const layerList = new LayerList({
+        view: view
+      });
+      view.ui.add(layerList, "top-left");
+
+      // 自定义其他底图
+      const customBasemap1 = new Basemap({
+        baseLayers: [
+          new TileLayer({
+            url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Terrain_Base/MapServer"
+          })
+        ],
+        title: "世界地形基础图",
+        id: "world-terrain-base"
+      });
+
+      const customBasemap2 = new Basemap({
+        baseLayers: [
+          new TileLayer({
+            url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer"
+          })
+        ],
+        title: "世界街道地图",
+        id: "world-street-map"
+      });
+
+      // 添加底图库微件，并调整底图顺序
+      const basemapGallery = new BasemapGallery({
+        view: view,
+        container: "basemapGalleryDiv",
+        source: [defaultBasemap, customBasemap1, customBasemap2]
+      });
+    });
+  </script>
+</head>
+
+<body>
+  <div id="header">福建土地覆被类型</div>
+  <div id="mapDiv"></div>
+  <div id="basemapGalleryDiv"></div>
+</body>
+
+</html>
+    
